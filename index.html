@@ -1,9 +1,24 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
+    <title>Mari Açaí - Painel da Cozinha</title>
+    <meta name="description" content="Sistema de gerenciamento de pedidos para Mari Açaí com integração ESP32 para sinalização de pedidos prontos." />
+    <meta property="og:title" content="Mari Açaí - Painel da Cozinha" />
+    <meta property="og:description" content="Sistema de gerenciamento de pedidos para Mari Açaí com integração ESP32 para sinalização de pedidos prontos." />
+    <script>
+      (function() {
+        try {
+          const theme = localStorage.getItem('theme');
+          if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (_) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

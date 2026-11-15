@@ -1,6 +1,10 @@
 # 🍦 Mari Açaí - Sistema de Gestão e Pedidos
 
-Este é um sistema completo "Full-Stack" desenvolvido sob medida para a loja **Mari Açaí**. Ele integra um cardápio digital para os clientes, um painel administrativo completo (Dashboard) para o gerenciamento da sorveteria/açaiteria, e uma integração exclusiva voltada para Internet das Coisas (IoT) usando **ESP32** para sinalização de pedidos.
+Este é um sistema completo "Full-Stack" desenvolvido sob medida para a loja **Mari Açaí**. Ele integra um cardápio digital para os clientes, um painel administrativo completo (Dashboard) para o gerenciamento da sorveteria/açaiteria, e uma integração exclusiva voltada para Internet das Coisas (IoT) usando **ESP32**.
+
+## 🧠 Arquitetura & Inovação (IoT + Telemetria Climática + Machine Learning)
+
+O projeto articula uma plataforma web em nuvem com dashboard gerencial para o controle de pedidos entre o balcão e a cozinha, e uma infraestrutura de Internet das Coisas (IoT) baseada em microcontroladores **ESP32** para o monitoramento do fluxo físico de clientes. Diante de restrições logísticas de tempo para a coleta massiva de dados físicos após a montagem do hardware, o projeto inovou ao integrar uma **API de telemetria climática** (Open-Meteo) e os **dados transacionais orgânicos** do sistema para o treinamento dos algoritmos de aprendizagem de máquina (Regressão Ridge, Árvore de Decisão CART e Ensemble Híbrido).
 
 ## ✨ Funcionalidades
 
@@ -18,8 +22,12 @@ Este é um sistema completo "Full-Stack" desenvolvido sob medida para a loja **M
   * Controle de formatação inteligente de preços.
 * **Gestão de Pedidos (Cozinha/Balcão)**:
   * Grade em tempo real dos pedidos (Pendente, Pronto, Entregue).
+* **Dashboard Gerencial & Inteligência Preditiva**:
+  * **Monitoramento de Fluxo IoT (ESP32)**: Contagem calibrada de passagens na porta (com divisor bidirecional, janela de debounce, desconto de equipe e filtro por horário comercial) cruzada com a taxa de conversão de pedidos.
+  * **Telemetria Climática (Open-Meteo)**: Correlação automática do histórico e previsão de temperatura/chuva com a demanda da loja.
+  * **Previsão de Demanda (Machine Learning)**: Treinamento no navegador com Regressão Linear Ridge, Árvore de Decisão (CART) e Ensemble Híbrido para projetar pedidos, receita estimada e recomendações operacionais para 7 ou 14 dias.
 * **Integração IoT (Hardware)**:
-  * API para microcontroladores (como o **ESP32**) lerem o status e acenderem LEDs ou tocarem alarmes quando um pedido é marcado como "Pronto" na cozinha.
+  * API para microcontroladores (**ESP32**) registrarem passagens de clientes no sensor físico da porta e lerem o status de sinalização em tempo real.
 
 ## 🛠 Tecnologias Utilizadas
 
@@ -83,11 +91,12 @@ create policy "Fazer upload de imagens" on storage.objects for insert with check
 ```
 </details>
 
-## 📡 Integração com ESP32
+## 📡 Integração com ESP32 & Telemetria Climática
 
-O Backend diponibiliza rotas simples e diretas para integrar o hardware da loja:
-* `GET /api/esp32/led`: Retorna `"1"` se o LED/sirene deve estar ligado (pedido recém marcado como pronto) ou `"0"` se deve estar desligado.
-* O sistema envia um sinal de ativação para a placa quando o atendente clica em *"Marcar como Pronto"*.
+O Backend disponibiliza rotas simples e diretas para integrar o hardware da loja e os dados climáticos:
+* `POST /api/esp32/led`: Recebe os disparos do sensor de presença/passagem na porta (`{"status": "1", "source": "esp32"}`), persiste no banco SQLite (`sensor_entries`) e transmite em tempo real via WebSocket para o dashboard.
+* `GET /api/esp32/led`: Retorna `"1"` ou `"0"` indicando o estado atual do sensor/sinalizador.
+* `GET /api/esp32/entries`: Consulta os registros históricos do sensor físico (com suporte a filtro por `start_date` e `end_date`).
+* `GET /api/weather`: Proxy público para a API Open-Meteo (histórico + previsão de 14 dias + geocodificação reversa) utilizado no treinamento dos modelos de aprendizagem de máquina.
 
 ---
-# PI4_sorvetria
